@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "unittest/**"
+      - ".github/workflows/**"
   pull_request:
     branches:
       - main
