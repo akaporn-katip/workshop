@@ -11,8 +11,9 @@ export class UserService {
     return this.userRepo.save({ email, createdAt: new Date() });
   }
 
-  async login(email: string) {
-    const existing = await this.userRepo.findOne({ email });
-    return existing ? true : false;
+  async findUserByEmail(email: string) {
+    const found = await this.userRepo.findOne({ email });
+    if (!found) return null;
+    return found;
   }
 }
