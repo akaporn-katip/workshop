@@ -37,7 +37,7 @@ const users: User[] = [
   },
 ];
 
-export class UserRepository {
+export class UserRepositoryMock implements UserRepository {
   async findOne({
     email,
   }: Pick<User, "email">): Promise<Omit<User, "createdAt"> | null> {
@@ -59,4 +59,14 @@ export class UserRepository {
     users.push(newUser);
     return newUser;
   }
+}
+
+export interface UserRepository {
+  findOne({
+    email,
+  }: Pick<User, "email">): Promise<Omit<User, "createdAt"> | null>;
+  save({
+    email,
+    createdAt,
+  }: Pick<User, "email" | "createdAt">): Promise<Omit<User, "createdAt">>;
 }

@@ -2,9 +2,9 @@
 Output runtest.gif
 
 # Set up a 1200x600 terminal with 46px font.
-Set FontSize 32
-Set Width 1200
-Set Height 600
+Set FontSize 20
+Set Width 1280
+Set Height 1280
 
 # Type a command in the terminal.
 Type "npm run test"
@@ -16,4 +16,4 @@ Sleep 500ms
 Enter
 
 # Admire the output for a bit.
-Sleep 5s
+Sleep 10s

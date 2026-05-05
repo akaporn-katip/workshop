@@ -10,4 +10,9 @@ export class UserService {
 
     return this.userRepo.save({ email, createdAt: new Date() });
   }
+
+  async login(email: string) {
+    const existing = await this.userRepo.findOne({ email });
+    return existing ? true : false;
+  }
 }

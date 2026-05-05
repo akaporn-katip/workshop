@@ -1,0 +1,63 @@
+name: SonarQube Check
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'unittest/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'unittest/**'
+
+jobs:
+  build:
+    name: Build, Test, and Analyze
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./unittest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install Dependencies
+        run: npm install
+        
+      - name: Run Tests and Coverage
+        run: npm run test:cov
+        
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v4 # Using the latest version
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          projectBaseDir: unittest
+          args: >
+            -Dsonar.projectKey=unittest
+            -Dsonar.sources=src
+            -Dsonar.tests=src
+            -Dsonar.test.inclusions=**/*.spec.ts
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.exclusions=**/*.spec.ts
+
+      - name: SonarQube Quality Gate Check
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        # Force to fail step after specific time.
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          scanMetadataReportFile: unittest/.scannerwork/report-task.txt

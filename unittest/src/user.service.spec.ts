@@ -22,7 +22,12 @@ describe("UserService", () => {
 
     // Assert — ตรวจผล
     expect(result.email).toBe("new@test.com");
+    expect(userRepo.findOne).toHaveBeenCalledWith({ email: "new@test.com" });
     expect(userRepo.save).toHaveBeenCalledTimes(1);
+    expect(userRepo.save).toHaveBeenCalledWith({
+      email: "new@test.com",
+      createdAt: expect.any(Date),
+    });
   });
 
   it("should throw ConflictException when email already exists", async () => {
@@ -33,6 +38,6 @@ describe("UserService", () => {
     await expect(service.register("old@test.com")).rejects.toThrow(
       ConflictException,
     );
+    expect(userRepo.save).not.toHaveBeenCalled();
   });
-
 });
